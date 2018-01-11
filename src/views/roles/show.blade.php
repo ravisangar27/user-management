@@ -4,13 +4,14 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8 col-md-offset-2"> 
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Value</th>
-                        </tr>
-                    </thead>
+                <div>
+                
+                    <ol class="breadcrumb">
+                        <li><a href="{!! route('role.index') !!}">Role</a></li> 
+                        <li><b>Role show </b></li>
+                    </ol>
+                </div> 
+                <table class="table table-striped">
                     <tbody>
                         <tr>
                             <td>Name</td>
@@ -18,7 +19,15 @@
                         </tr>
                         <tr>
                             <td>Guard name</td>
-                            <td>{{ $role->guard_name }}</td>
+                            <td>
+                                <div class="row">
+                                @foreach($role->permissions as $permission ) 
+    
+                                    <div class="col-md-3" style="color:{!! '#'.dechex(rand(0x000000, 0xFFFFFF)) !!}">{!! $permission->name !!}</div> 
+                                   
+                                @endforeach 
+                                </div>
+                            </td>
                         </tr>
                     </tbody> 
                 </table>

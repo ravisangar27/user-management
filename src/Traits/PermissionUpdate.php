@@ -25,13 +25,16 @@ trait PermissionUpdate
                 if(!($model_name =='Auth' || $model_name =='Password' || $model_name == 'Login' || $model_name == 'Register' || $model_name == 'ForgotPassword' ||  $model_name == 'ResetPassword' ) )
                 { 
                     $action_name = substr($action_name, $at_pos + 1);
-                    $model_array[] = $model_name; 
+                  
                     if(array_key_exists($action_name, $merge_action)){
                         $action_name = $merge_action[$action_name];
-                    }
+                    } 
+                    $model_pieces = preg_split('/(?=[A-Z])/', $model_name);
+                    $model_name = strtolower(implode(array_filter($model_pieces), '-'));
                     $action_array[] = $action_name;
                     $model_action[$model_name][] = $action_name; 
-                    $permission = $model_name.' '.$action_name;
+                    $model_array[] = $model_name; 
+                    $permission = $model_name.'-'.$action_name;
                     if(Permission::where('name', $permission)->count() == 0){
                         Permission::create(['name' => $permission]);
                     }

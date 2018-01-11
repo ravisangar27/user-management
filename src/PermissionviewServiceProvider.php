@@ -20,6 +20,20 @@ class PermissionviewServiceProvider extends ServiceProvider
             __DIR__ . '/../config/permissionview.php' => $this->app->configPath() . '/permissionview.php',
         ], 'config');
 
+        if (!class_exists('CreatePermissionviewTable')) {
+            
+            $timestamp = date('Y_m_d_His', time());
+            $this->publishes([
+                 __DIR__ . '/../database/migrations/create_permissionview_table.php' => $this->app->databasePath() . "/migrations/{$timestamp}_create_permissionview_table.php",
+            ], 'migrations');
+        }
+
+        if (!class_exists('PermissionViewSeeder')) {
+
+            $this->publishes([
+                 __DIR__ . '/../database/seeds/PermissionViewSeeder.php' => $this->app->databasePath() . "/seeds/PermissionViewSeeder.php",
+            ], 'migrations');
+        }
        
         $this->loadViewsFrom(__DIR__.'/views', 'Permissionview');
         

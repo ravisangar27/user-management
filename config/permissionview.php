@@ -2,13 +2,13 @@
 
 return [
     'models' => [
-        'action' => Aucos\Permissionview\Models\Action::class,
-        'model' => Aucos\Permissionview\Models\Model::class,
+        'PermissionAction' => Aucos\Permissionview\Models\PermissionAction::class,
+        'PermissionModel' => Aucos\Permissionview\Models\PermissionModel::class,
     ],
 
     'table_names' => [
-        'action' => 'actions',
-        'model' => 'models'
+        'permissionAction' => 'permission_actions',
+        'permissionModel' => 'permission_models'
     ], 
 
     'merge_action' => [

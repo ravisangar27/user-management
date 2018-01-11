@@ -3,19 +3,28 @@
 namespace Aucos\Permissionview\Http\Controllers;
 
 use Illuminate\Http\Request; 
-use Aucos\Permissionview\Http\Requests\Users\CreateReqeust; 
+use Aucos\Permissionview\Http\Requests\Users\CreateReqeust;
+use Aucos\Permissionview\Http\Requests\Users\EditReqeust; 
 use Aucos\Permissionview\Models\Action;
 use Aucos\Permissionview\Models\Model; 
 use App\User;
 use Route; 
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;  
-use Aucos\Permissionview\Traits\PermissionUpdate;
-
+use Aucos\Permissionview\Models\PermissionModel; 
+use Aucos\Permissionview\Models\PermissionAction; 
 
 class UserController extends Controller
-{
-    use PermissionUpdate;
+{ 
+
+    protected $permission;
+    
+    public function __construct(Permission $permission)
+    {
+           
+        $this->permission = $permission;
+    }
+
     public function index()
     { 
         $users = User::all();
@@ -29,8 +38,13 @@ class UserController extends Controller
      */
     public function create()
     {   
-        $modelsActions = $this->updateModelActions();
-        return view('Permissionview::users.create', compact('modelsActions'));
+       
+        $roles = Role::all();  
+        $permission = $this->permission; 
+        $permissionActions = PermissionAction::all();
+        $permissionModel = PermissionModel::all();
+
+        return view('Permissionview::users.create', compact('permissionActions', 'permissionModel', 'roles', 'permission'));
     }
 
     /**
@@ -49,18 +63,12 @@ class UserController extends Controller
         ]); 
 
         $input = $request->all(); 
-
         $user->assignRole($request->roles);
      
         foreach ($input as $key => $value) { 
         
-            if (!($key == '_token' || $key == 'name' || $key === 'guard_name' || $key == '_method' || $key == 'roles' )) {
+            if (!($key == '_token' || $key == 'name' || $key === 'email' || $key === 'password' || $key === 'password_confirmation' || $key == '_method' || $key == 'roles' )) {
               
-                $key = str_replace('_', ' ', $key); 
-
-                if(Permission::where('name', $key)->count() == 0){
-                    Permission::create(['name' => $key]);
-                }
              
                 $user->givePermissionTo($key);
             }
@@ -89,13 +97,12 @@ class UserController extends Controller
      */
     public function edit(user $user) 
     {  
-        $modelsActions = $this->updateModelActions();
-         $roles = Role::all(); 
-        // $str = 'HomeClientCome';
-        // $pieces = preg_split('/(?=[A-Z])/',$str);
-        // dd(strtolower(implode(array_filter($pieces), '-')));
-      //  dd($user->permissions);
-        return view('Permissionview::users.edit', compact('user',  'modelsActions', 'roles'));
+      
+        $roles = Role::all(); 
+        $permission = $this->permission; 
+        $permissionActions = PermissionAction::all();
+        $permissionModel = PermissionModel::all();
+        return view('Permissionview::users.edit', compact('user',  'permissionActions', 'permissionModel', 'roles', 'permission'));
     }
 
     /**
@@ -105,28 +112,23 @@ class UserController extends Controller
      * @param  \App\State  $state
      * @return \Illuminate\Http\Response
      */
-    public function update(CreateReqeust $request, user $user)
+    public function update(EditReqeust $request, user $user)
     { 
-        
+        app()['cache']->forget('spatie.permission.cache');
         $user->update(['name' => $request->name]); 
         $user->permissions()->detach(); 
         $input = $request->all(); 
-       // dd($input );
-       // dd($input); 
-       $user->roles()->detach();
-       $user->assignRole($request->roles); 
+        $user->roles()->detach();
+        app()['cache']->forget('spatie.permission.cache');
+        if($request->roles != null){
+            $user->assignRole($request->roles); 
+        }
        
         foreach ($input as $key => $value) { 
-            //  echo $key;
-              echo '<br>';
+       
               if (!($key == '_token' || $key == 'name' || $key === 'password' ||  $key === 'confirm_password' || $key === 'email' || $key == '_method'||  $key == 'roles')) {
-                
-                  $key = str_replace('_', ' ', $key); 
-  
-                
-               
+                  $key = str_replace('_', '-', $key); 
                   $user->givePermissionTo($key);
-                 // $group_array[$key] = 1;
               }
           }
         return redirect()->route('user.show', [$user->id]);
@@ -141,7 +143,6 @@ class UserController extends Controller
     public function destroy(user $user)
     {
         $user->delete();
-
         return redirect()->route('user.index');
     }
 }

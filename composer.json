@@ -2,7 +2,8 @@
     "name": "aucos/laravel-permission-view",
     "description": "laravel permission  view package",
     "require": {
-        "spatie/laravel-permission": "^2.7"
+        "spatie/laravel-permission": "^2.7",
+        "laravelcollective/html":"^5.4.0"
     },
     "license": "MIT",
     "authors": [

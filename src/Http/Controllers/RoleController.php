@@ -7,12 +7,20 @@ use Aucos\Permissionview\Http\Requests\Roles\CreateReqeust;
 use Spatie\Permission\Models\Role;
 use Route; 
 use Spatie\Permission\Models\Permission; 
-use Aucos\Permissionview\Traits\PermissionUpdate;
-
+use Aucos\Permissionview\Models\PermissionModel; 
+use Aucos\Permissionview\Models\PermissionAction; 
 
 class RoleController extends Controller
 {
-    use PermissionUpdate;
+
+    protected $permission;
+    
+    public function __construct(Permission $permission)
+    {
+           
+        $this->permission = $permission;
+    }
+
     public function index()
     { 
         $roles = Role::all();
@@ -26,9 +34,12 @@ class RoleController extends Controller
      */
     public function create()
     {   
-       $modelsActions = $this->updateModelActions();
-    
-        return view('Permissionview::roles.create', compact('modelsActions'));
+       
+        $permission = $this->permission; 
+        $permissionActions = PermissionAction::all();
+        $permissionModel = PermissionModel::all();
+
+        return view('Permissionview::roles.create', compact('permissionActions', 'permissionModel', 'permission'));
     }
 
     /**
@@ -49,12 +60,7 @@ class RoleController extends Controller
            // echo '<br>';
             if (!($key == '_token' || $key == 'name' || $key === 'guard_name' || $key == '_method')) {
               
-                $key = str_replace('_', ' ', $key); 
-
-                if(Permission::where('name', $key)->count() == 0){
-                    Permission::create(['name' => $key]);
-                }
-             
+                $key = str_replace('_', '-', $key);
                 $role->givePermissionTo($key);
                // $group_array[$key] = 1;
             }
@@ -82,8 +88,11 @@ class RoleController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit(Role $role)
-    {   $modelsActions = $this->updateModelActions();
-        return view('Permissionview::roles.edit', compact('role',  'modelsActions'));
+    { 
+        $permission = $this->permission; 
+        $permissionActions = PermissionAction::all();
+        $permissionModel = PermissionModel::all();
+        return view('Permissionview::roles.edit', compact('role',  'permissionActions', 'permissionModel', 'permission'));
     }
 
     /**
@@ -95,21 +104,16 @@ class RoleController extends Controller
      */
     public function update(CreateReqeust $request, Role $role)
     { 
-        
+        app()['cache']->forget('spatie.permission.cache');
         $role->update(['name' => $request->name]); 
         $role->permissions()->detach(); 
         $input = $request->all();
-
+        app()['cache']->forget('spatie.permission.cache');
         foreach ($input as $key => $value) { 
-            //  echo $key;
-              echo '<br>';
+          
               if (!($key == '_token' || $key == 'name' || $key === 'guard_name' || $key == '_method')) {
                 
-                  $key = str_replace('_', ' ', $key); 
-  
-                  if(Permission::where('name', $key)->count() == 0){
-                      Permission::create(['name' => $key]);
-                  }
+                  $key = str_replace('_', '-', $key); 
                
                   $role->givePermissionTo($key);
                  // $group_array[$key] = 1;
@@ -125,7 +129,8 @@ class RoleController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(Role $role)
-    {
+    { 
+        dd(5555);
         $role->delete();
 
         return redirect()->route('role.index');

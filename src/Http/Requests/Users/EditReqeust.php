@@ -4,7 +4,7 @@ namespace Aucos\Permissionview\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateReqeust extends FormRequest
+class EditReqeust  extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +24,7 @@ class CreateReqeust extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|alpha_num|min:3|max:32',
-            'email' => 'required|email',
-            'password' => 'required|min:6|confirmed',
-            'password_confirmation' => 'required|min:6'
+            'name' => 'required|alpha_num|min:3|max:32'
         ];
     }
 }

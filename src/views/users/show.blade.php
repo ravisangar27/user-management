@@ -3,8 +3,15 @@
 @section('content')
     <div class="container">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2"> 
-                <table>
+            <div class="col-md-12"> 
+                <div>
+                
+                    <ol class="breadcrumb">
+                        <li><a href="{!! route('user.index') !!}">User</a></li> 
+                        <li><b>User show </b></li>
+                    </ol>
+                </div>
+                <table class="table table-striped">
                  
                     <tbody>
                         <tr>
@@ -16,21 +23,31 @@
                             <td>{{ $user->email }}</td>
                         </tr> 
                         <tr>
-                            <td>Permission</td>
+                            <td>Direct permissions</td>
                             <td>
-                                @foreach($user->getDirectPermissions() as $permission)
-                                    <div>{{ $permission->name }}</div>
-                                @endforeach
+                                <div class="row">
+                                @foreach($user->getDirectPermissions()  as $permission ) 
+    
+                                    <div class="col-md-3" style="color:{!! '#'.dechex(rand(0x000000, 0xFFFFFF)) !!}">{!! $permission->name !!}</div> 
+                                   
+                                @endforeach 
+                                </div>
                             </td>
                         </tr>
                         <tr>
                             <td>roles</td>
-                            <td> <br><br>
-                            {{  $user->getRoleNames()->implode(' ,') }} 
-                                <br><br>
-                                Permissions 
-                                @foreach($user->getPermissionsViaRoles() as $permission)
-                                    <div>{{ $permission->name }}</div>
+                            <td> 
+                                
+                                @foreach($user->roles as $role)
+                                    <h3 style="color:{!! '#'.dechex(rand(0x000000, 0xFFFFFF)) !!}" >{{ $role->name }}</h3> 
+                                    <br> 
+                                    <div class="row">
+                                        @foreach($role->permissions as $permission ) 
+            
+                                            <div class="col-md-3" style="color:{!! '#'.dechex(rand(0x000000, 0xFFFFFF)) !!}">{!! $permission->name !!}</div> 
+                                        
+                                        @endforeach 
+                                    </div>
                                 @endforeach
                                 
                             </td>

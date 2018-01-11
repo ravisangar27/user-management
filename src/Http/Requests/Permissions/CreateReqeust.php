@@ -1,6 +1,6 @@
 <?php
 
-namespace Aucos\Permissionview\Http\Requests\Users;
+namespace Aucos\Permissionview\Http\Requests\Permissions;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,10 +24,7 @@ class CreateReqeust extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|alpha_num|min:3|max:32',
-            'email' => 'required|email',
-            'password' => 'required|min:6|confirmed',
-            'password_confirmation' => 'required|min:6'
+            //
         ];
     }
 }

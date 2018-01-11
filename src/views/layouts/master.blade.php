@@ -26,7 +26,17 @@
     </style>
 </head>
 <body>
-    <div id="app">
+    <div id="app"> 
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li ><a href="{!! route('permissionModel.index') !!}">Permission model</a></li> 
+                <li ><a href="{!! route('permissionAction.index') !!}">Permission action</a></li>
+                <li ><a href="{!! route('permission.index') !!}">Permission</a></li>
+                <li><a href="{!! route('role.index') !!}">Role</a></li>
+                <li><a href="{!! route('user.index') !!}">User</a></li>
+              
+            </ul> 
+        </div>
         @yield('content')
     </div>
     <script src="{{ asset('js/app.js') }}"></script>
