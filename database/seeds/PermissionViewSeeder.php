@@ -3,6 +3,10 @@
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission; 
+use Spatie\Permission\Models\Role;
+use App\User;
+use Aucos\Permissionview\Models\PermissionModel; 
+use Aucos\Permissionview\Models\PermissionAction; 
 
 class PermissionViewSeeder extends Seeder
 {
@@ -25,14 +29,14 @@ class PermissionViewSeeder extends Seeder
             'restore' => 'Wiederherstellen'
         ); 
 
-        foreach($permissionBasicActions as $name => $displayName ){
-            DB::table($tableNames['permissionAction'])->insert([
+        foreach($permissionBasicActions as $name => $displayName ){ 
+            
+            PermissionAction::create([
                 'name' => $name,
                 'display_name' =>  $displayName,
                 'permission_default' => true
             ]);
         } 
-
 
         $packageModels = array(
             'user' => 'User', 
@@ -44,7 +48,7 @@ class PermissionViewSeeder extends Seeder
 
         foreach($packageModels as $modelName => $ModelDisplayName ){
 
-            DB::table($tableNames['permissionModel'])->insert([
+            PermissionModel::create([
                 'name' =>  $modelName,
                 'display_name' =>  $ModelDisplayName
             ]);
@@ -60,10 +64,22 @@ class PermissionViewSeeder extends Seeder
                 if(Permission::where('name', $permission)->count() === 0){
                     Permission::create(['name' => $permission]);
                 }
-                
             }
-           
+        } 
+
+        if(Role::where('name', 'super-admin')->count() === 0){
+            Permission::create(['name' => 'super-admin']);
         }
-     
+
+        $configUser = config('permissionview.user'); 
+
+        if($configUser['status']){
+            $user = User::create([
+                'name' => $configUser['name'], 
+                'email' => $configUser['email'],
+                'password' => bcrypt($configUser['password']),  
+            ]);
+            $user->assignRole('super-admin');
+        }
     }
 }

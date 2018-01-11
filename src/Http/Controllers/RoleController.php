@@ -5,7 +5,6 @@ namespace Aucos\Permissionview\Http\Controllers;
 use Illuminate\Http\Request; 
 use Aucos\Permissionview\Http\Requests\Roles\CreateReqeust; 
 use Spatie\Permission\Models\Role;
-use Route; 
 use Spatie\Permission\Models\Permission; 
 use Aucos\Permissionview\Models\PermissionModel; 
 use Aucos\Permissionview\Models\PermissionAction; 

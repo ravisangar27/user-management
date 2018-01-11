@@ -10,23 +10,12 @@ return [
         'permissionAction' => 'permission_actions',
         'permissionModel' => 'permission_models'
     ], 
-
-    'merge_action' => [
-        'store'  =>  'create', 
-        'edit'   =>  'update'
-    ], 
-
-    'display_language' => 'german',
-
-    'display_name' => [
-        'german' => [
-            'index' => 'Übersicht',
-            'show' => 'Details',
-            'create' => 'Erstellen',
-            'update' => 'Bearbeiten',
-            'delete' => 'Löschen',
-            'restore' => 'Wiederherstellen',
-        ]
+// create a user as super-admin when seed 
+    'user' =>[
+        'status' => false,
+        'name' => '',
+        'email' =>  '',
+        'password' => ''
     ]
 
 
