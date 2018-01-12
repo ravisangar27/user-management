@@ -30,12 +30,14 @@ class PermissionViewSeeder extends Seeder
         ); 
 
         foreach($permissionBasicActions as $name => $displayName ){ 
-            
-            PermissionAction::create([
-                'name' => $name,
-                'display_name' =>  $displayName,
-                'permission_default' => true
-            ]);
+
+            if(PermissionAction::where('name', $name)->count() === 0){
+                PermissionAction::create([
+                    'name' => $name,
+                    'display_name' =>  $displayName,
+                    'permission_default' => true
+                ]);
+            }
         } 
 
         $packageModels = array(
@@ -48,10 +50,12 @@ class PermissionViewSeeder extends Seeder
 
         foreach($packageModels as $modelName => $ModelDisplayName ){
 
-            PermissionModel::create([
-                'name' =>  $modelName,
-                'display_name' =>  $ModelDisplayName
-            ]);
+            if(PermissionModel::where('name', $modelName)->count() === 0){
+                PermissionModel::create([
+                    'name' =>  $modelName,
+                    'display_name' =>  $ModelDisplayName
+                ]);
+            }
 
             if($modelName == 'permission'){
                 $permissionBasicActions = array(
@@ -68,18 +72,25 @@ class PermissionViewSeeder extends Seeder
         } 
 
         if(Role::where('name', 'super-admin')->count() === 0){
-            Permission::create(['name' => 'super-admin']);
+            Role::create(['name' => 'super-admin']);
         }
 
         $configUser = config('permissionview.user'); 
 
-        if($configUser['status']){
-            $user = User::create([
-                'name' => $configUser['name'], 
-                'email' => $configUser['email'],
-                'password' => bcrypt($configUser['password']),  
-            ]);
-            $user->assignRole('super-admin');
+        if($configUser['status']){ 
+            if(User::where('email', $configUser['email'])->count() === 0){
+                $user = User::create([
+                    'name' => $configUser['name'], 
+                    'email' => $configUser['email'],
+                    'password' => bcrypt($configUser['password']),  
+                ]);
+            }
+
+            $role = Role::where('name', 'super-admin')->first();
+            $user = User::where('email', $configUser['email'])->first();
+            if(!($user->hasRole('super-admin'))){
+                $user->assignRole('super-admin');
+            } 
         }
     }
 }

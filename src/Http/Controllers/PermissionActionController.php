@@ -14,7 +14,7 @@ class PermissionActionController extends Controller
 
     public function index()
     {  
-       $permissionActions = PermissionAction::all();
+        $permissionActions = PermissionAction::all();
         return view('Permissionview::permissionActions.index', compact('permissionActions'));
     }
 
@@ -49,7 +49,6 @@ class PermissionActionController extends Controller
         
         $permissionAction = PermissionAction::create($permissionActionInput);
 
-       
         return redirect()->route('permissionAction.show', [$permissionAction->id]);
     }
 

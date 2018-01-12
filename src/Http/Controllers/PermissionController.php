@@ -26,6 +26,7 @@ class PermissionController extends Controller
 
         $permissionActions = PermissionAction::all();
         $permissionModel = PermissionModel::all();
+        
         return view('Permissionview::permissions.index', compact('permission', 'permissionActions', 'permissionModel'));
     }
 
@@ -52,6 +53,7 @@ class PermissionController extends Controller
             $permission = Permission::where('name', $deletePermission)->first(); 
             $permission->delete();
          }
+
         return redirect()->route('permission.index');
     }
 }
