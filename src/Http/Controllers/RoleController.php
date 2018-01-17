@@ -13,11 +13,12 @@ class RoleController extends Controller
 {
 
     protected $permission;
-    
+    protected $user;
     public function __construct(Permission $permission)
     {
            
         $this->permission = $permission;
+        $this->user = config('auth.providers.users.model');
     }
 
     public function index()
@@ -33,7 +34,7 @@ class RoleController extends Controller
      */
     public function create()
     {   
-       
+        
         $permission = $this->permission; 
         $permissionActions = PermissionAction::all();
         $permissionModel = PermissionModel::all();
@@ -90,8 +91,9 @@ class RoleController extends Controller
     { 
         $permission = $this->permission; 
         $permissionActions = PermissionAction::all();
-        $permissionModel = PermissionModel::all();
-        return view('Permissionview::roles.edit', compact('role',  'permissionActions', 'permissionModel', 'permission'));
+        $permissionModel = PermissionModel::all(); 
+        $users = $this->user::all();
+        return view('Permissionview::roles.edit', compact('role',  'permissionActions', 'permissionModel', 'permission', 'users'));
     }
 
     /**
@@ -104,13 +106,25 @@ class RoleController extends Controller
     public function update(CreateReqeust $request, Role $role)
     { 
         app()['cache']->forget('spatie.permission.cache');
-        $role->update(['name' => $request->name]); 
+        if(auth()->user()->roles()->where('name', 'super-admin')->count() !== 0){
+            $role->update(['name' => $request->name]); 
+        }
+       
         $role->permissions()->detach(); 
         $input = $request->all();
+        app()['cache']->forget('spatie.permission.cache'); 
+        if($request->userIds != null){
+            foreach($request->userIds as $userId){
+                $user = $this->user::find($userId);
+                if(!($user->hasRole($role->name))){
+                    $user->assignRole($role->name); 
+                }
+            } 
+        }
         app()['cache']->forget('spatie.permission.cache');
         foreach ($input as $key => $value) { 
           
-              if (!($key == '_token' || $key == 'name' || $key === 'guard_name' || $key == '_method')) {
+              if (!($key == '_token' || $key == 'name' || $key === 'guard_name' || $key == '_method' || $key == 'userIds')) {
                 
                   $key = str_replace('_', '-', $key); 
                

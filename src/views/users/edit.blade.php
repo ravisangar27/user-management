@@ -16,6 +16,12 @@
 
                         @include ('Permissionview::users.form') 
 
+                        <div class="form-group {!! ($errors->has('email')) ? 'has-error' : '' !!}">
+                            {!! Form::label('email', 'Email') !!}
+                            {{ Form::text('email', null, array('class' => 'form-control', 'placeholder' => 'attendance', 'readonly')) }}
+                          
+                        </div>
+
                         <div class="form-group {!! ($errors->has('confirm_password')) ? 'has-error' : '' !!}"> 
                             {!! Form::label('roles', 'Roles') !!}
                             <select class="js-example-basic-multiple" value="admin" style="width:100%" name="roles[]" multiple="multiple">

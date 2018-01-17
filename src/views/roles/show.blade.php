@@ -18,7 +18,17 @@
                             <td>{{ $role->name }}</td>
                         </tr>
                         <tr>
-                            <td>Guard name</td>
+                            <td>Users</td>
+                            <td> 
+                                <div class="row">
+                                    @foreach($role->users as $user ) 
+                                        <div class="col-md-3" >{!! $user->email !!}</div> 
+                                    @endforeach 
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Permissions</td>
                             <td>
                                 <div class="row">
                                 @foreach($role->permissions as $permission ) 

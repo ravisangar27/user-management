@@ -7,7 +7,6 @@ use Aucos\Permissionview\Http\Requests\Users\CreateReqeust;
 use Aucos\Permissionview\Http\Requests\Users\EditReqeust; 
 use Aucos\Permissionview\Models\Action;
 use Aucos\Permissionview\Models\Model; 
-use App\User;
 use Route; 
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;  
@@ -18,17 +17,20 @@ class UserController extends Controller
 { 
 
     protected $permission;
+    protected $user;
     
     public function __construct(Permission $permission)
     {
-           
+          
         $this->permission = $permission;
+        $this->user = config('auth.providers.users.model');
     }
 
     public function index()
     { 
-        $users = User::all();
+        $users = $this->user::all();
         return view('Permissionview::users.index', compact('users'));
+
     }
 
     /**
@@ -56,15 +58,16 @@ class UserController extends Controller
     public function store(CreateReqeust $request)
     {
         
-        $user = User::create([
+        $user = $this->user::create([
             'name' => $request->name, 
             'email' => $request->email,
             'password' => bcrypt($request->password),  
         ]); 
 
         $input = $request->all(); 
-        $user->assignRole($request->roles);
-     
+        if($request->roles != null){
+            $user->assignRole($request->roles);
+        }
         foreach ($input as $key => $value) { 
         
             if (!($key == '_token' || $key == 'name' || $key === 'email' || $key === 'password' || $key === 'password_confirmation' || $key == '_method' || $key == 'roles' )) {
@@ -83,9 +86,9 @@ class UserController extends Controller
      * @param  \App\State  $state
      * @return \Illuminate\Http\Response
      */
-    public function show(user $user)
+    public function show($userId)
     { 
-       
+        $user = config('auth.providers.users.model')::find($userId);
         return view('Permissionview::users.show', compact('user'));
     }
 
@@ -95,9 +98,9 @@ class UserController extends Controller
      * @param  \App\State  $state
      * @return \Illuminate\Http\Response
      */
-    public function edit(user $user) 
+    public function edit($userId) 
     {  
-      
+        $user = config('auth.providers.users.model')::find($userId);
         $roles = Role::all(); 
         $permission = $this->permission; 
         $permissionActions = PermissionAction::all();
@@ -112,9 +115,10 @@ class UserController extends Controller
      * @param  \App\State  $state
      * @return \Illuminate\Http\Response
      */
-    public function update(EditReqeust $request, user $user)
+    public function update(EditReqeust $request, $userId)
     { 
         app()['cache']->forget('spatie.permission.cache');
+        $user = config('auth.providers.users.model')::find($userId);
         $user->update(['name' => $request->name]); 
         $user->permissions()->detach(); 
         $input = $request->all(); 
@@ -140,8 +144,9 @@ class UserController extends Controller
      * @param  \App\State  $state
      * @return \Illuminate\Http\Response
      */
-    public function destroy(user $user)
-    {
+    public function destroy($userId)
+    {   
+        $user = config('auth.providers.users.model')::find($userId);
         $user->delete();
         return redirect()->route('user.index');
     }

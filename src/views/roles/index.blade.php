@@ -4,7 +4,9 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8 col-md-offset-2"> 
-                <a class=" btn btn-success pull-right" href="{!! route('role.create') !!}">Add new role</a> 
+                @role('super-admin')
+                    <a class=" btn btn-success pull-right" href="{!! route('role.create') !!}">Add new role</a> 
+                @endrole
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -15,7 +17,7 @@
                     <tbody> 
                         @foreach($roles as $role)
                             <tr>
-                                <td>{{  $role->name }}</td> 
+                                <td><a href="{!! route('role.show', [$role->id]) !!}" > {{  $role->name }} </a></td> 
                                 <td> 
                                
                                 <div class="row">

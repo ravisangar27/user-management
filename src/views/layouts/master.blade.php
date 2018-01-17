@@ -28,9 +28,11 @@
 <body>
     <div id="app"> 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
+            <ul class="nav navbar-nav"> 
+                 @role('super-admin')
                 <li ><a href="{!! route('permissionModel.index') !!}">Permission model</a></li> 
-                <li ><a href="{!! route('permissionAction.index') !!}">Permission action</a></li>
+                <li ><a href="{!! route('permissionAction.index') !!}">Permission action</a></li> 
+                @endrole
                 <li ><a href="{!! route('permission.index') !!}">Permission</a></li>
                 <li><a href="{!! route('role.index') !!}">Role</a></li>
                 <li><a href="{!! route('user.index') !!}">User</a></li>

@@ -11,12 +11,14 @@ return [
         'permissionModel' => 'permission_models'
     ], 
 // create a user as super-admin when seed 
+// first field must be name (name or username ... etc)
     'user' =>[
-        'status' => false,
-        'name' => '',
+        'field' => [[
+                'name' => '',
+                'value' => ''
+            ]
+        ],
         'email' =>  '',
         'password' => ''
     ]
-
-
 ];

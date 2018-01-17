@@ -10,8 +10,11 @@
                         <li><a href="{!! route('permission.index') !!}">Permission</a></li> 
                         <li><b>Permission show </b></li>
                     </ol>
-                </div>
-                <table>
+                </div> 
+                <br><br>
+                <a class=" btn btn btn-primary pull-right" href="{!! route('permission.edit', [$permission->id]) !!}">Edit</a> 
+                <br><br>
+                <table class="table table-striped">
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -24,8 +27,24 @@
                             <td>{{ $permission->name }}</td>
                         </tr>
                         <tr>
-                            <td>Guard name</td>
-                            <td>{{ $permission->guard_name }}</td>
+                            <td>Users</td>
+                            <td>
+                                <div class="row">
+                                    @foreach($permission->users as $user ) 
+                                        <div class="col-md-3" >{!! $user->email !!}</div> 
+                                    @endforeach 
+                                </div>
+                            </td>
+                        </tr> 
+                        <tr>
+                            <td>roles</td>
+                            <td>    
+                                <div class="row">
+                                    @foreach($permission->roles as $role ) 
+                                        <div class="col-md-3" >{!! $role->name !!}</div> 
+                                    @endforeach 
+                                </div>
+                            </td>
                         </tr>
                     </tbody> 
                 </table>
