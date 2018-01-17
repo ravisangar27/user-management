@@ -22,10 +22,10 @@
                                 <td>{{  $permissionAction->display_name }}</td>
                                 <td> 
                                     <div class="row">
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
                                             <a href="{!! route('permissionAction.edit', [$permissionAction->id]) !!}" class='btn btn-primary'>Edit </a>&nbsp;&nbsp; 
                                         </div> 
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
                                             {{ Form::open(['method' => 'DELETE', 'route' => ['permissionAction.destroy', $permissionAction->id]]) }}
                                                 {{ Form::submit('Delete', ['class' => 'btn btn-danger']) }}
                                             {{ Form::close() }}

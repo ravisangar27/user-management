@@ -21,10 +21,10 @@
                                 <td> 
                                
                                 <div class="row">
-                                    <div class="col-md-2">
+                                    <div class="col-md-6 text-left">
                                         <a href="{!! route('role.edit', [$role->id]) !!}" class='btn btn-primary'>Edit </a>&nbsp;&nbsp; 
                                     </div> 
-                                    <div class="col-md-2">
+                                    <div class="col-md-6 text-righ">
                                         {{ Form::open(['method' => 'DELETE', 'route' => ['role.destroy', $role->id]]) }}
                                             {{ Form::submit('Delete', ['class' => 'btn btn-danger']) }}
                                         {{ Form::close() }}

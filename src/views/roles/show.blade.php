@@ -11,6 +11,9 @@
                         <li><b>Role show </b></li>
                     </ol>
                 </div> 
+                <br><br>
+                <a class=" btn btn btn-primary pull-right" href="{!! route('role.edit', [$role->id]) !!}">Edit</a> 
+                <br><br>
                 <table class="table table-striped">
                     <tbody>
                         <tr>

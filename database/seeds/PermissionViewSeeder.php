@@ -40,42 +40,9 @@ class PermissionViewSeeder extends Seeder
             }
         } 
 
-        // $packageModels = array(
-        //     'user' => 'User', 
-        //     'role' => 'Role', 
-        //     'permission-action' => 'Permission Action',
-        //     'permission-model' => 'Permission Model',
-        //     'permission' => 'Permission'
-        // ); 
-
-        // foreach($packageModels as $modelName => $ModelDisplayName ){
-
-        //     if(PermissionModel::where('name', $modelName)->count() === 0){
-        //         PermissionModel::create([
-        //             'name' =>  $modelName,
-        //             'display_name' =>  $ModelDisplayName
-        //         ]);
-        //     }
-
-        //     if($modelName == 'permission'){
-        //         $permissionBasicActions = array(
-        //             'index' => 'Übersicht', 
-        //             'update' => 'Bearbeiten'
-        //         ); 
-        //     } 
-        //     foreach($permissionBasicActions as $actionName => $ActionDisplayName ){ 
-        //          $permission = $modelName.'-'.$actionName;
-        //         if(Permission::where('name', $permission)->count() === 0){
-        //             Permission::create(['name' => $permission]);
-        //         }
-        //     }
-        // } 
-
         if(Role::where('name', 'super-admin')->count() === 0){
             Role::create(['name' => 'super-admin']);
         }
-
-      
 
         $permissionBasicActions = array('index', 'show', 'create', 'update', 'delete', 'restore');
         $otherAction = '';

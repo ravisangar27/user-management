@@ -24,7 +24,7 @@ class EditReqeust  extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|alpha_num|min:3|max:32'
+           
         ];
     }
 }

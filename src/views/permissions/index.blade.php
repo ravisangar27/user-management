@@ -4,7 +4,7 @@
     <div class="container"> 
         <div class="row">
             <div class="col-md-12"> 
-            @role('super-admin')
+            @if (optional(auth()->user())->hasRole('super-admin'))
                 <div>
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active"><a href="#permission-view" aria-controls="permission-view" role="tab" data-toggle="tab">Permission view</a></li>
@@ -54,7 +54,7 @@
                 </div> 
                 @else
                     @include ('Permissionview::permissions.view') 
-                @endrole
+                @endif
             </div>
         </div>
     </div>

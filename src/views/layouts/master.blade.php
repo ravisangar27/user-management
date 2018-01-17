@@ -27,18 +27,22 @@
 </head>
 <body>
     <div id="app"> 
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav"> 
-                 @role('super-admin')
-                <li ><a href="{!! route('permissionModel.index') !!}">Permission model</a></li> 
-                <li ><a href="{!! route('permissionAction.index') !!}">Permission action</a></li> 
-                @endrole
-                <li ><a href="{!! route('permission.index') !!}">Permission</a></li>
-                <li><a href="{!! route('role.index') !!}">Role</a></li>
-                <li><a href="{!! route('user.index') !!}">User</a></li>
-              
-            </ul> 
-        </div>
+        <nav class="navbar navbar-default navbar-static-top">
+            <div class="container">
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-left"> 
+                        @if (optional(auth()->user())->hasRole('super-admin'))
+                        <li class="{{ Request::segment(1) === 'permissionModel' ? 'active' : null }}"><a href="{!! route('permissionModel.index') !!}">Permission model</a></li> 
+                        <li class="{{ Request::segment(1) === 'permissionAction' ? 'active' : null }}"><a href="{!! route('permissionAction.index') !!}">Permission action</a></li> 
+                        @endif
+                        <li class="{{ Request::segment(1) === 'permission' ? 'active' : null }}"><a href="{!! route('permission.index') !!}">Permission</a></li>
+                        <li class="{{ Request::segment(1) === 'role' ? 'active' : null }}"><a href="{!! route('role.index') !!}">Role</a></li>
+                        <li class="{{ Request::segment(1) === 'user' ? 'active' : null }}"><a href="{!! route('user.index') !!}">User</a></li>
+                    
+                    </ul> 
+                </div>
+            </div>
+        </nav>
         @yield('content')
     </div>
     <script src="{{ asset('js/app.js') }}"></script>

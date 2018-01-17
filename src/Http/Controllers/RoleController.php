@@ -106,7 +106,7 @@ class RoleController extends Controller
     public function update(CreateReqeust $request, Role $role)
     { 
         app()['cache']->forget('spatie.permission.cache');
-        if(auth()->user()->roles()->where('name', 'super-admin')->count() !== 0){
+        if(optional(auth()->user())->hasRole('super-admin')){
             $role->update(['name' => $request->name]); 
         }
        

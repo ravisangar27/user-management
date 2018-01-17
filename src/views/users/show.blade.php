@@ -10,7 +10,10 @@
                         <li><a href="{!! route('user.index') !!}">User</a></li> 
                         <li><b>User show </b></li>
                     </ol>
-                </div>
+                </div> 
+                <br><br>
+                <a class=" btn btn btn-primary pull-right" href="{!! route('user.edit', [$user->id]) !!}">Edit</a> 
+                <br><br>
                 <table class="table table-striped">
                  
                     <tbody>

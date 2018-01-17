@@ -22,9 +22,16 @@ class CreateReqeust extends FormRequest
      * @return array
      */
     public function rules()
-    {
+    {   
+        if(optional(auth()->user())->hasRole('super-admin')){
+            return [
+                'name' => 'required'
+            ];
+        } 
+        
         return [
-            'name' => 'required'
-        ];
+            
+        ]; 
+
     }
 }
