@@ -14,8 +14,6 @@ class PermissionviewServiceProvider extends ServiceProvider
     public function boot()
     {
         
-       // $this->loadRoutesFrom(__DIR__.'/routes.php'); 
-
          $this->registerRoutesMacro();
 
         $this->publishes([
@@ -37,7 +35,7 @@ class PermissionviewServiceProvider extends ServiceProvider
             ], 'migrations');
         }
        
-      //  $this->loadViewsFrom(__DIR__.'/views', 'Permissionview');
+        $this->loadViewsFrom(__DIR__.'/views', 'Permissionview');
         
         $this->publishes([
                 __DIR__.'/views' => resource_path('views/vendor/Permissionview'),
