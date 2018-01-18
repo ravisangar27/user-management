@@ -12,26 +12,21 @@
                     </ol>
                 </div> 
                 <br><br>
-                <a class=" btn btn btn-primary pull-right" href="{!! route('permission.edit', [$permission->id]) !!}">Edit</a> 
+                <a class=" btn btn btn-primary pull-right" href="{!! route('permission.edit', [$permission->id]) !!}">Assigning user and role</a> 
                 <br><br>
                 <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Value</th>
-                        </tr>
-                    </thead>
+                    
                     <tbody>
                         <tr>
                             <td>Name</td>
-                            <td>{{ $permission->name }}</td>
+                            <td><h4> {{ $permission->name }}</h4></td>
                         </tr>
                         <tr>
                             <td>Users</td>
                             <td>
                                 <div class="row">
                                     @foreach($permission->users as $user ) 
-                                        <div class="col-md-3" >{!! $user->email !!}</div> 
+                                        <div class="col-md-3 text-danger" ><h4>{!! $user->email !!}</h4></div> 
                                     @endforeach 
                                 </div>
                             </td>
@@ -41,7 +36,7 @@
                             <td>    
                                 <div class="row">
                                     @foreach($permission->roles as $role ) 
-                                        <div class="col-md-3" >{!! $role->name !!}</div> 
+                                        <div class="col-md-3 text-info" ><h4>{!! $role->name !!}</h4></div> 
                                     @endforeach 
                                 </div>
                             </td>

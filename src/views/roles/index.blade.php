@@ -11,7 +11,7 @@
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Action</th>
+                            <th width="180px">Action</th>
                         </tr>
                     </thead>
                     <tbody> 

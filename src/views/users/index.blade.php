@@ -11,7 +11,7 @@
                             <th>Name</th>
                             <th>Email</th> 
                             <th>Roles</th>
-                            <th>Action</th>
+                            <th width="180px">Action</th>
                         </tr>
                     </thead>
                     <tbody> 
@@ -22,10 +22,10 @@
                                 <td>{{  $user->getRoleNames()->implode(' ,') }}</td>
                                 <td> 
                                     <div class="row">
-                                        <div class="col-md-3">
+                                        <div class="col-md-6 text-left">
                                             <a href="{!! route('user.edit', [$user->id]) !!}" class='btn btn-primary'>Edit </a>&nbsp;&nbsp; 
                                         </div> 
-                                        <div class="col-md-3">
+                                        <div class="col-md-6 text-right">
                                             {{ Form::open(['method' => 'DELETE', 'route' => ['user.destroy', $user->id]]) }}
                                                 {{ Form::submit('Delete', ['class' => 'btn btn-danger']) }}
                                             {{ Form::close() }}

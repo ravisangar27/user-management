@@ -18,14 +18,14 @@
                     <tbody>
                         <tr>
                             <td>Name</td>
-                            <td>{{ $role->name }}</td>
+                            <td><h4> {{ $role->name }} </h4></td>
                         </tr>
                         <tr>
                             <td>Users</td>
                             <td> 
                                 <div class="row">
                                     @foreach($role->users as $user ) 
-                                        <div class="col-md-3" >{!! $user->email !!}</div> 
+                                        <div class="col-md-3 text-info" ><h4> {!! $user->email !!} </h4></div> 
                                     @endforeach 
                                 </div>
                             </td>
@@ -36,7 +36,9 @@
                                 <div class="row">
                                 @foreach($role->permissions as $permission ) 
     
-                                    <div class="col-md-3" style="color:{!! '#'.dechex(rand(0x000000, 0xFFFFFF)) !!}">{!! $permission->name !!}</div> 
+                                    <div class="col-md-4 text-danger">
+                                        <h4> {!! $permission->name !!} </h4>
+                                    </div> 
                                    
                                 @endforeach 
                                 </div>

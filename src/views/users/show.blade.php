@@ -19,20 +19,18 @@
                     <tbody>
                         <tr>
                             <td>Name</td>
-                            <td>{{ $user->name }}</td>
+                            <td><h4>{{ $user->name }} </h4></td>
                         </tr>
                         <tr>
                             <td>Email</td>
-                            <td>{{ $user->email }}</td>
+                            <td><h4>{{ $user->email }}</h4></td>
                         </tr> 
                         <tr>
                             <td>Direct permissions</td>
                             <td>
                                 <div class="row">
                                 @foreach($user->getDirectPermissions()  as $permission ) 
-    
-                                    <div class="col-md-3" style="color:{!! '#'.dechex(rand(0x000000, 0xFFFFFF)) !!}">{!! $permission->name !!}</div> 
-                                   
+                                    <div class="col-md-3 text-danger"> <h4> {!! $permission->name !!} </h4> </div> 
                                 @endforeach 
                                 </div>
                             </td>
@@ -42,12 +40,12 @@
                             <td> 
                                 
                                 @foreach($user->roles as $role)
-                                    <h3 style="color:{!! '#'.dechex(rand(0x000000, 0xFFFFFF)) !!}" >{{ $role->name }}</h3> 
-                                    <br> 
+                                    <h3 class="text-info">{{ $role->name }}</h3> 
+        
                                     <div class="row">
                                         @foreach($role->permissions as $permission ) 
             
-                                            <div class="col-md-3" style="color:{!! '#'.dechex(rand(0x000000, 0xFFFFFF)) !!}">{!! $permission->name !!}</div> 
+                                            <div class="col-md-3 text-danger"><h4>&nbsp;&nbsp;&nbsp;&nbsp;{!! $permission->name !!}</h4></div> 
                                         
                                         @endforeach 
                                     </div>

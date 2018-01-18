@@ -20,14 +20,14 @@ class PermissionViewSeeder extends Seeder
         
         $tableNames = config('permissionview.table_names'); 
         
-        $permissionBasicActions = array(
+        $permissionBasicActions = [
             'index' => 'Übersicht', 
             'show' => 'Details', 
             'create' => 'Erstellen', 
             'update' => 'Bearbeiten', 
             'delete' => 'Löschen', 
             'restore' => 'Wiederherstellen'
-        ); 
+        ]; 
 
         foreach($permissionBasicActions as $name => $displayName ){ 
 
@@ -44,9 +44,9 @@ class PermissionViewSeeder extends Seeder
             Role::create(['name' => 'super-admin']);
         }
 
-        $permissionBasicActions = array('index', 'show', 'create', 'update', 'delete', 'restore');
+        $permissionBasicActions = ['index', 'show', 'create', 'update', 'delete', 'restore'];
         $otherAction = '';
-        $modelName = array();
+        $modelName = [];
         foreach (Permission::orderBy('name', 'asc')->get() as $permission) {
              $otherActionStatus = true;
             foreach ($permissionBasicActions as $permissionBasicAction) {
@@ -80,14 +80,20 @@ class PermissionViewSeeder extends Seeder
         } 
 
         $configUser = config('permissionview.user'); 
-        
-        if($configUser['email'] != '' && $configUser['password'] != '' && $configUser['field.name'] != '' && $configUser['field.value'] != ''){ 
-            if(config('auth.providers.users.model')::where('email', $configUser['email'])->count() === 0){
-                $user = config('auth.providers.users.model')::create([
-                    $configUser['field.name'] => $configUser['field.value'], 
+
+        if($configUser['email'] != '' && $configUser['password'] != ''){ 
+            if(config('auth.providers.users.model')::where('email', $configUser['email'])->count() === 0){ 
+
+                $userInput = [
                     'email' => $configUser['email'],
                     'password' => bcrypt($configUser['password']),  
-                ]);
+                ];
+                foreach($configUser['additional_fields'] as $additional_field) { 
+                    if($additional_field['name'] != '' && $additional_field['value'] != ''){ 
+                        $userInput[$additional_field['name']] = $additional_field['value'];
+                    }
+                }
+                $user = config('auth.providers.users.model')::create($userInput);
             }
     
             $user = config('auth.providers.users.model')::where('email', $configUser['email'])->first();

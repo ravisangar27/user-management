@@ -12,13 +12,22 @@ return [
     ], 
 // create a user as super-admin when seed 
 // first field must be name (name or username ... etc)
-    'user' =>[
-        'field' => [[
+    'user' => [
+        'additional_fields' => [[
                 'name' => '',
                 'value' => ''
             ]
         ],
         'email' =>  '',
         'password' => ''
+    ],
+
+    // user request rule for user create 
+
+    'user_create_rule' =>[
+        'email' => 'required|email',
+        'password' => 'required|min:6|confirmed',
+        'password_confirmation' => 'required|min:6'
     ]
+
 ];

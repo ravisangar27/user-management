@@ -23,13 +23,13 @@
 
                         <div class="form-group {!! ($errors->has('password	')) ? 'has-error' : '' !!}">
                             {!! Form::label('password', 'Password') !!}
-                            {!! Form::password('password', null, array('class' => 'form-control awesome' )) !!}
+                            {!! Form::password('password',  array('class' => 'form-control awesome' )) !!}
                             {!! ($errors->has('password	') ? $errors->first('password	') : '') !!}
                         </div> 
 
                         <div class="form-group {!! ($errors->has('password_confirmation')) ? 'has-error' : '' !!}">
                             {!! Form::label('password_confirmation', 'Confirm password') !!}
-                            {!! Form::password('password_confirmation', null, array('class' => 'form-control', 'placeholder' => '' )) !!}
+                            {!! Form::password('password_confirmation',  array('class' => 'form-control', 'placeholder' => '' )) !!}
                             {!! ($errors->has('password_confirmation') ? $errors->first('password_confirmation') : '') !!}
                         </div> 
 

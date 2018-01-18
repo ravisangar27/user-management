@@ -21,11 +21,15 @@
                     <tbody>
                         <tr>
                             <td>Name</td>
-                            <td>{{ $permissionModel->name }}</td>
+                            <td>
+                                {{ $permissionModel->name }}
+                            </td>
                         </tr>
                         <tr>
                             <td>Guard name</td>
-                            <td>{{ $permissionModel->guard_name }}</td>
+                            <td>
+                                {{ $permissionModel->guard_name }}
+                            </td>
                         </tr>
                     </tbody> 
                 </table>
