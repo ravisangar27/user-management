@@ -70,8 +70,7 @@ class PermissionController extends Controller
     public function edit(Permission $permission)
     { 
         $users = $this->user::all();
-        $roles = Role::all();
-
+        $roles = Role::where('name', '!=' , 'super-admin' )->get();
         return view('Permissionview::permissions.edit', compact('permission', 'roles', 'users'));
     } 
 
@@ -98,7 +97,7 @@ class PermissionController extends Controller
             }
          }
 
-         $assigningRole = array();
+        $assigningRole = array();
         if($request->roleIds != null){
             foreach($request->roleIds as $roleId){ 
                 $assigningRole[] = $roleId;

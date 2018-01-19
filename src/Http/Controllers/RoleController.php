@@ -22,8 +22,9 @@ class RoleController extends Controller
     }
 
     public function index()
-    { 
-        $roles = Role::all();
+    {   
+        $roles = Role::where('name', '!=' , 'super-admin' )->get();
+
         return view('Permissionview::roles.index', compact('roles'));
     }
 
@@ -104,7 +105,13 @@ class RoleController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(CreateReqeust $request, Role $role)
-    { 
+    {   if($role->name == 'super-admin')
+        {
+            if(! optional(auth()->user())->hasRole('super-admin')){ 
+                return redirect()->route('role.index');
+            }
+        }
+       
         app()['cache']->forget('spatie.permission.cache');
         if(optional(auth()->user())->hasRole('super-admin')){
             $role->update(['name' => $request->name]); 
@@ -113,14 +120,23 @@ class RoleController extends Controller
         $role->permissions()->detach(); 
         $input = $request->all();
         app()['cache']->forget('spatie.permission.cache'); 
+        $assigningUser = [];
         if($request->userIds != null){
-            foreach($request->userIds as $userId){
+            foreach($request->userIds as $userId){ 
+                $assigningUser[] = $userId;
                 $user = $this->user::find($userId);
                 if(!($user->hasRole($role->name))){
                     $user->assignRole($role->name); 
                 }
             } 
-        }
+        } 
+        foreach( $this->user::all()->pluck('id')->diff(collect($assigningUser)) as $userId){
+            $user = $this->user::find($userId); 
+            if(($user->hasRole($role->name))){
+                $user->removeRole($role->name); 
+            }
+         }
+
         app()['cache']->forget('spatie.permission.cache');
         foreach ($input as $key => $value) { 
           
@@ -142,7 +158,12 @@ class RoleController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(Role $role)
-    { 
+    {   
+        if($role->name == 'super-admin')
+        {
+            return redirect()->route('role.index');
+        }
+
         $role->delete();
 
         return redirect()->route('role.index');

@@ -41,7 +41,11 @@ class UserController extends Controller
     public function create()
     {   
        
-        $roles = Role::all();  
+        if(optional(auth()->user())->hasRole('super-admin')){
+            $roles = Role::all();
+        } else {
+            $roles = Role::where('name', '!=' , 'super-admin' )->get();
+        }
         $permission = $this->permission; 
         $permissionActions = PermissionAction::all();
         $permissionModel = PermissionModel::all();
@@ -64,10 +68,18 @@ class UserController extends Controller
             'password' => bcrypt($request->password),  
         ]); 
 
-        $input = $request->all(); 
-        if($request->roles != null){
-            $user->assignRole($request->roles);
-        }
+        $input = $request->all();
+
+        if($request->roles != null){ 
+            $roles = $request->roles;
+            if(! optional(auth()->user())->hasRole('super-admin')){
+                foreach (array_keys($roles, 'super-admin') as $key) {
+                    unset($roles[$key]);
+                }
+            }
+            $user->assignRole($roles); 
+        } 
+        
         foreach ($input as $key => $value) { 
         
             if (!($key == '_token' || $key == 'name' || $key === 'email' || $key === 'password' || $key === 'password_confirmation' || $key == '_method' || $key == 'roles' )) {
@@ -101,7 +113,11 @@ class UserController extends Controller
     public function edit($userId) 
     {  
         $user = config('auth.providers.users.model')::find($userId);
-        $roles = Role::all(); 
+        if(optional(auth()->user())->hasRole('super-admin')){
+            $roles = Role::all();
+        } else {
+            $roles = Role::where('name', '!=' , 'super-admin' )->get();
+        }
         $permission = $this->permission; 
         $permissionActions = PermissionAction::all();
         $permissionModel = PermissionModel::all();
@@ -123,9 +139,17 @@ class UserController extends Controller
         $user->permissions()->detach(); 
         $input = $request->all(); 
         $user->roles()->detach();
-        app()['cache']->forget('spatie.permission.cache');
-        if($request->roles != null){
-            $user->assignRole($request->roles); 
+        app()['cache']->forget('spatie.permission.cache'); 
+       
+
+        if($request->roles != null){ 
+            $roles = $request->roles;
+            if(! optional(auth()->user())->hasRole('super-admin')){
+                foreach (array_keys($roles, 'super-admin') as $key) {
+                    unset($roles[$key]);
+                }
+            }
+            $user->assignRole($roles); 
         }
        
         foreach ($input as $key => $value) { 
