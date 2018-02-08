@@ -19,7 +19,9 @@ return [
             ]
         ],
         'email' =>  '',
-        'password' => ''
+        'password' => '', 
+        // user name can change user_name, name or etc
+        'userName' => 'name'
     ],
 
     // user request rule for user create 
@@ -28,6 +30,8 @@ return [
         'email' => 'required|email',
         'password' => 'required|min:6|confirmed',
         'password_confirmation' => 'required|min:6'
-    ]
+    ], 
+    // page size 
+    'pagination' => 20
 
 ];

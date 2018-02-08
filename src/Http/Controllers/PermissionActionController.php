@@ -14,7 +14,7 @@ class PermissionActionController extends Controller
 
     public function index()
     {  
-        $permissionActions = PermissionAction::all();
+        $permissionActions = PermissionAction::paginate(config('permissionview.pagination'));
         return view('Permissionview::permissionActions.index', compact('permissionActions'));
     }
 

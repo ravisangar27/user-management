@@ -19,7 +19,7 @@
                     <tbody>
                         <tr>
                             <td>Name</td>
-                            <td><h4>{{ $user->name }} </h4></td>
+                            <td><h4>{{ $user->$userName }} </h4></td>
                         </tr>
                         <tr>
                             <td>Email</td>

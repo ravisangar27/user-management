@@ -35,7 +35,10 @@
                             </tr> 
                         @endforeach
                     </tbody>
-                </table>
+                </table> 
+                <div> 
+                {{ $permissionActions->links() }}
+                </div>
             </div>
         </div>
     </div>

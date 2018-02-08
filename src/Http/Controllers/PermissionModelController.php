@@ -16,7 +16,7 @@ class PermissionModelController extends Controller
 
     public function index()
     {  
-       $permissionModels = PermissionModel::all();
+       $permissionModels = PermissionModel::paginate(config('permissionview.pagination'));
         return view('Permissionview::permissionModels.index', compact('permissionModels'));
     }
 

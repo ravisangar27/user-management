@@ -31,19 +31,15 @@ class PermissionViewSeeder extends Seeder
 
         foreach($permissionBasicActions as $name => $displayName ){ 
 
-            if(PermissionAction::where('name', $name)->count() === 0){
-                PermissionAction::create([
-                    'name' => $name,
-                    'display_name' =>  $displayName,
-                    'permission_default' => true
-                ]);
-            }
+            PermissionAction::firstOrCreate([
+                'name' => $name,
+                'display_name' =>  $displayName,
+                'permission_default' => true
+            ]);
         } 
 
-        if(Role::where('name', 'super-admin')->count() === 0){
-            Role::create(['name' => 'super-admin']);
-        }
-
+        Role::firstOrCreate(['name' => 'super-admin']);
+      
         $permissionBasicActions = ['index', 'show', 'create', 'update', 'delete', 'restore'];
         $otherAction = '';
         $modelName = [];
@@ -51,13 +47,11 @@ class PermissionViewSeeder extends Seeder
              $otherActionStatus = true;
             foreach ($permissionBasicActions as $permissionBasicAction) {
                 if (str_is('*-'.$permissionBasicAction, $permission->name)) {
-                     $modelName =  explode('-'.$permissionBasicAction, $permission->name);
-                    if (PermissionModel::where('name', $modelName[0])->count() === 0) {
-                        PermissionModel::create([
-                            'name' =>  $modelName[0],
-                            'display_name' =>  $modelName[0]
-                        ]);
-                    }
+                    $modelName =  explode('-'.$permissionBasicAction, $permission->name);
+                    PermissionModel::firstOrCreate([
+                        'name' =>  $modelName[0],
+                        'display_name' =>  $modelName[0]
+                    ]);
                      $otherActionStatus = false;
                 }
             }
@@ -67,14 +61,13 @@ class PermissionViewSeeder extends Seeder
             // echo $permission->name.'<br>';
             if ($otherAction != '' && count($modelName)) {
                 if (str_is($modelName[0].'-*', $otherAction)) {
-                     $actionName =  explode($modelName[0].'-', $otherAction);
-                    if (PermissionAction::where('name', $actionName[1])->count() === 0) {
-                        PermissionAction::create([
-                            'name' => $actionName[1],
-                            'display_name' =>  $actionName[1],
-                            'permission_default' => false
-                        ]);
-                    }
+                    $actionName =  explode($modelName[0].'-', $otherAction);
+                    PermissionAction::firstOrCreate([
+                        'name' => $actionName[1],
+                        'display_name' =>  $actionName[1],
+                        'permission_default' => false
+                    ]);
+                   
                 }
             }
         } 
@@ -82,19 +75,17 @@ class PermissionViewSeeder extends Seeder
         $configUser = config('permissionview.user'); 
 
         if($configUser['email'] != '' && $configUser['password'] != ''){ 
-            if(config('auth.providers.users.model')::where('email', $configUser['email'])->count() === 0){ 
-
-                $userInput = [
-                    'email' => $configUser['email'],
-                    'password' => bcrypt($configUser['password']),  
-                ];
-                foreach($configUser['additional_fields'] as $additional_field) { 
-                    if($additional_field['name'] != '' && $additional_field['value'] != ''){ 
-                        $userInput[$additional_field['name']] = $additional_field['value'];
-                    }
+            $userInput = [
+                'email' => $configUser['email'],
+                'password' => bcrypt($configUser['password']),  
+            ];
+            foreach($configUser['additional_fields'] as $additional_field) { 
+                if($additional_field['name'] != '' && $additional_field['value'] != ''){ 
+                    $userInput[$additional_field['name']] = $additional_field['value'];
                 }
-                $user = config('auth.providers.users.model')::create($userInput);
             }
+            $user = config('auth.providers.users.model')::firstOrCreate($userInput);
+            
     
             $user = config('auth.providers.users.model')::where('email', $configUser['email'])->first();
             if(!($user->hasRole('super-admin'))){

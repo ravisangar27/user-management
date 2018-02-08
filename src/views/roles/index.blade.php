@@ -19,24 +19,24 @@
                             <tr>
                                 <td><a href="{!! route('role.show', [$role->id]) !!}" > {{  $role->name }} </a></td> 
                                 <td> 
-                               
-                                <div class="row">
-                                    <div class="col-md-6 text-left">
-                                        <a href="{!! route('role.edit', [$role->id]) !!}" class='btn btn-primary'>Edit </a>&nbsp;&nbsp; 
+                                    <div class="row">
+                                        <div class="col-md-6 text-left">
+                                            <a href="{!! route('role.edit', [$role->id]) !!}" class='btn btn-primary'>Edit </a>&nbsp;&nbsp; 
+                                        </div> 
+                                        <div class="col-md-6 text-righ">
+                                            {{ Form::open(['method' => 'DELETE', 'route' => ['role.destroy', $role->id]]) }}
+                                                {{ Form::submit('Delete', ['class' => 'btn btn-danger']) }}
+                                            {{ Form::close() }}
+                                        </div>
                                     </div> 
-                                    <div class="col-md-6 text-righ">
-                                        {{ Form::open(['method' => 'DELETE', 'route' => ['role.destroy', $role->id]]) }}
-                                            {{ Form::submit('Delete', ['class' => 'btn btn-danger']) }}
-                                        {{ Form::close() }}
-                                    </div>
-                                </div> 
-                               
-                               
                                 </td>
                             </tr> 
                         @endforeach
                     </tbody>
-                </table>
+                </table> 
+                <div> 
+                {{ $roles->links() }}
+                </div>
             </div>
         </div>
     </div>

@@ -15,12 +15,15 @@ class PermissionController extends Controller
   
     protected $permission;
     protected $user;
+    protected $role;
 
-    public function __construct(Permission $permission)
+    public function __construct(Permission $permission, Role $role)
     {
        
         $this->permission = $permission;
         $this->user = config('auth.providers.users.model');
+        $this->role = $role;
+        app()['cache']->forget('spatie.permission.cache');
     }
 
     public function index()
@@ -37,33 +40,32 @@ class PermissionController extends Controller
     public function store(CreateReqeust $request)
     {
         
-        $input = $request->all(); 
-        $inputAllPermission = array();
+        $inputs = $request->all(); 
+    
+        app()['cache']->forget('spatie.permission.cache');
+        $inputAllPermission = [];
+       
+        $permissionOb = $this->permission;
+
+        $inputAllPermission = collect($inputs)->except(['_token', '_method'])
+            ->map(function ($input, $permission) use ($permissionOb) {
+                $permissionOb->firstOrCreate(['name' => $permission]);
+                return $permission;
+            }); 
 
         app()['cache']->forget('spatie.permission.cache');
-        $inputAllPermission = array();
-        foreach ($input as $permission => $value) { 
-            if (!($permission == '_token' || $permission == '_method')) {
-                $inputAllPermission[] = $permission; 
-                if(Permission::where('name', $permission)->count() === 0){
-                    Permission::create(['name' => $permission]);
-                }
-            }
-        } 
-        app()['cache']->forget('spatie.permission.cache');
 
-        foreach( Permission::all()->pluck('name')->diff(collect($inputAllPermission)) as $deletePermission){
-            $permission = Permission::where('name', $deletePermission)->first(); 
+        Permission::all()->pluck('name')->diff(collect($inputAllPermission))->each(function($deletePermission) use($permissionOb) {
+            $permission = $permissionOb->where('name', $deletePermission)->first(); 
             $permission->delete();
-         }
+        });
 
         return redirect()->route('permission.index');
     } 
 
    
     public function show(Permission $permission)
-    { 
-       
+    {    
         return view('Permissionview::permissions.show', compact('permission'));
     } 
 
@@ -78,43 +80,45 @@ class PermissionController extends Controller
     { 
         
         app()['cache']->forget('spatie.permission.cache');
-        $assigningUser = array();
-       
-        if($request->userIds != null){
-            foreach($request->userIds as $userId){ 
-                $assigningUser[] = $userId;
-                $user = $this->user::find($userId);
+        $assigningUser = [];
+        $userOb = $this->user;
+        if($request->userIds != null){  
+
+            $assigningUser = collect($request->userIds)->map(function ($userId) use ($userOb, $permission) {
+                $user = $userOb::find($userId);
                 if(!($user->hasPermissionTo($permission->name))){
                     $user->givePermissionTo($permission->name); 
-                }
-            } 
-        } 
-       
-        foreach( $this->user::all()->pluck('id')->diff(collect($assigningUser)) as $userId){
-            $user = $this->user::find($userId); 
+                } 
+                return $userId;
+            });
+        }
+      
+        $this->user::all()->pluck('id')->diff(collect($assigningUser))->each(function($userId) use($userOb, $permission){
+            $user = $userOb::find($userId); 
             if(($user->hasPermissionTo($permission->name))){
                 $user->revokePermissionTo($permission->name); 
             }
-         }
+        });
 
-        $assigningRole = array();
+        $assigningRole = [];
+        $roleOb = $this->role;
         if($request->roleIds != null){
-            foreach($request->roleIds as $roleId){ 
-                $assigningRole[] = $roleId;
-                $role = Role::find($roleId);
+        
+            $assigningRole = collect($request->roleIds)->map(function ($roleId) use ($roleOb, $permission) {
+                $role = $roleOb->find($roleId);
                 if(!($role->hasPermissionTo($permission->name))){
                     $role->givePermissionTo($permission->name); 
                 }
-            } 
+                return $roleId;
+            });
         } 
 
-
-        foreach( Role::all()->pluck('id')->diff(collect($assigningRole)) as $roleId){
-            $role = Role::find($roleId); 
+        Role::all()->pluck('id')->diff(collect($assigningRole)) ->each(function($roleId) use($roleOb, $permission){
+            $role = $roleOb->find($roleId);
             if(($role->hasPermissionTo($permission->name))){
                 $role->revokePermissionTo($permission->name); 
             }
-         } 
+        });
 
         return redirect()->route('permission.show', [$permission->id]);
     }

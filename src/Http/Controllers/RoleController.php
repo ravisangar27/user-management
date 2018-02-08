@@ -23,7 +23,7 @@ class RoleController extends Controller
 
     public function index()
     {   
-        $roles = Role::where('name', '!=' , 'super-admin' )->get();
+        $roles = Role::where('name', '!=' , 'super-admin' )->paginate(config('permissionview.pagination'));
 
         return view('Permissionview::roles.index', compact('roles'));
     }
@@ -35,7 +35,7 @@ class RoleController extends Controller
      */
     public function create()
     {   
-        
+        app()['cache']->forget('spatie.permission.cache');
         $permission = $this->permission; 
         $permissionActions = PermissionAction::all();
         $permissionModel = PermissionModel::all();
@@ -54,19 +54,14 @@ class RoleController extends Controller
         
         $role = Role::create(['name' => $request->name]); 
 
-        $input = $request->all();
-     
-        foreach ($input as $key => $value) { 
-          //  echo $key;
-           // echo '<br>';
-            if (!($key == '_token' || $key == 'name' || $key === 'guard_name' || $key == '_method')) {
-              
-                $key = str_replace('_', '-', $key);
-                $role->givePermissionTo($key);
-               // $group_array[$key] = 1;
-            }
-        }
+        $inputs = $request->all(); 
 
+        collect($inputs)->except(['_token', 'name', 'guard_name', '_method'])
+        ->each(function ($inputs, $key) use ($role) {
+            $key = str_replace('_', '-', $key); 
+            $role->givePermissionTo($key);
+        });
+     
         return redirect()->route('role.show', [$role->id]);
     }
 
@@ -94,6 +89,7 @@ class RoleController extends Controller
         $permissionActions = PermissionAction::all();
         $permissionModel = PermissionModel::all(); 
         $users = $this->user::all();
+        app()['cache']->forget('spatie.permission.cache');
         return view('Permissionview::roles.edit', compact('role',  'permissionActions', 'permissionModel', 'permission', 'users'));
     }
 
@@ -118,36 +114,38 @@ class RoleController extends Controller
         }
        
         $role->permissions()->detach(); 
-        $input = $request->all();
+        $inputs = $request->all();
         app()['cache']->forget('spatie.permission.cache'); 
         $assigningUser = [];
+        $userOb = $this->user;
         if($request->userIds != null){
-            foreach($request->userIds as $userId){ 
-                $assigningUser[] = $userId;
-                $user = $this->user::find($userId);
+         
+            $assigningUser = collect($request->userIds)->map(function($userId) use($userOb, $role){
+                $user = $userOb::find($userId);
                 if(!($user->hasRole($role->name))){
                     $user->assignRole($role->name); 
-                }
-            } 
+                } 
+
+                return $userId;
+            });
         } 
-        foreach( $this->user::all()->pluck('id')->diff(collect($assigningUser)) as $userId){
-            $user = $this->user::find($userId); 
+    
+        $this->user::all()->pluck('id')->diff(collect($assigningUser))->each(function ($userId, $key) use ($userOb, $role) { 
+            $user = $userOb::find($userId); 
             if(($user->hasRole($role->name))){
                 $user->removeRole($role->name); 
             }
-         }
+        });
+           
 
-        app()['cache']->forget('spatie.permission.cache');
-        foreach ($input as $key => $value) { 
-          
-              if (!($key == '_token' || $key == 'name' || $key === 'guard_name' || $key == '_method' || $key == 'userIds')) {
-                
-                  $key = str_replace('_', '-', $key); 
-               
-                  $role->givePermissionTo($key);
-                 // $group_array[$key] = 1;
-              }
-          }
+        app()['cache']->forget('spatie.permission.cache'); 
+
+        collect($inputs)->except(['_token', 'name', 'guard_name', '_method', 'userIds'])
+            ->each(function ($input, $key) use ($role) {
+                $key = str_replace('_', '-', $key); 
+                $role->givePermissionTo($key);
+            });
+    
         return redirect()->route('role.show', [$role->id]);
     }
 

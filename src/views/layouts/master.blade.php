@@ -38,7 +38,9 @@
                         <li class="{{ Request::segment(1) === 'permission' ? 'active' : null }}"><a href="{!! route('permission.index') !!}">Permission</a></li>
                         <li class="{{ Request::segment(1) === 'role' ? 'active' : null }}"><a href="{!! route('role.index') !!}">Role</a></li>
                         <li class="{{ Request::segment(1) === 'user' ? 'active' : null }}"><a href="{!! route('user.index') !!}">User</a></li>
-                    
+                        @if (optional(auth()->user())->hasRole('super-admin'))
+                        <li class="{{ Request::segment(1) === 'activity' ? 'active' : null }}"><a href="{!! route('activity.index') !!}">Activity</a></li>
+                        @endif
                     </ul> 
                 </div>
             </div>

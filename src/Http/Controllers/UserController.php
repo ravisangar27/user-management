@@ -18,18 +18,21 @@ class UserController extends Controller
 
     protected $permission;
     protected $user;
+    protected $userName;
     
     public function __construct(Permission $permission)
-    {
-          
+    {  
         $this->permission = $permission;
         $this->user = config('auth.providers.users.model');
+        $this->userName = config('permissionview.user.userName');
+        
     }
 
     public function index()
     { 
-        $users = $this->user::all();
-        return view('Permissionview::users.index', compact('users'));
+        $users = $this->user::paginate(config('permissionview.pagination'));
+        $userName = $this->userName;
+        return view('Permissionview::users.index', compact('users', 'userName'));
 
     }
 
@@ -40,7 +43,7 @@ class UserController extends Controller
      */
     public function create()
     {   
-       
+        app()['cache']->forget('spatie.permission.cache');
         if(optional(auth()->user())->hasRole('super-admin')){
             $roles = Role::all();
         } else {
@@ -49,8 +52,8 @@ class UserController extends Controller
         $permission = $this->permission; 
         $permissionActions = PermissionAction::all();
         $permissionModel = PermissionModel::all();
-
-        return view('Permissionview::users.create', compact('permissionActions', 'permissionModel', 'roles', 'permission'));
+        $userName = $this->userName;
+        return view('Permissionview::users.create', compact('permissionActions', 'permissionModel', 'roles', 'permission', 'userName'));
     }
 
     /**
@@ -63,32 +66,28 @@ class UserController extends Controller
     {
         
         $user = $this->user::create([
-            'name' => $request->name, 
+            $this->userName => $request->name, 
             'email' => $request->email,
             'password' => bcrypt($request->password),  
         ]); 
 
-        $input = $request->all();
+        $inputs = $request->all();
 
         if($request->roles != null){ 
             $roles = $request->roles;
             if(! optional(auth()->user())->hasRole('super-admin')){
-                foreach (array_keys($roles, 'super-admin') as $key) {
-                    unset($roles[$key]);
-                }
+                $roles = collect($roles)->filter(function ($value, $key) {
+                    return $value != 'super-admin';
+                });
             }
             $user->assignRole($roles); 
         } 
         
-        foreach ($input as $key => $value) { 
-        
-            if (!($key == '_token' || $key == 'name' || $key === 'email' || $key === 'password' || $key === 'password_confirmation' || $key == '_method' || $key == 'roles' )) {
-              
-             
+        collect($inputs)->except(['_token', 'name', 'password', 'password_confirmation', 'email', '_method', 'roles'])
+            ->each(function ($input, $key) use ($user) {
+                $key = str_replace('_', '-', $key); 
                 $user->givePermissionTo($key);
-            }
-        }
-
+            });
         return redirect()->route('user.show', [$user->id]);
     }
 
@@ -101,7 +100,8 @@ class UserController extends Controller
     public function show($userId)
     { 
         $user = config('auth.providers.users.model')::find($userId);
-        return view('Permissionview::users.show', compact('user'));
+        $userName = $this->userName;
+        return view('Permissionview::users.show', compact('user', 'userName'));
     }
 
     /**
@@ -111,17 +111,20 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($userId) 
-    {  
+    {   
+        app()['cache']->forget('spatie.permission.cache');
         $user = config('auth.providers.users.model')::find($userId);
         if(optional(auth()->user())->hasRole('super-admin')){
             $roles = Role::all();
-        } else {
+        } else { 
+
             $roles = Role::where('name', '!=' , 'super-admin' )->get();
         }
         $permission = $this->permission; 
         $permissionActions = PermissionAction::all();
-        $permissionModel = PermissionModel::all();
-        return view('Permissionview::users.edit', compact('user',  'permissionActions', 'permissionModel', 'roles', 'permission'));
+        $permissionModel = PermissionModel::all(); 
+        $userName = $this->userName;
+        return view('Permissionview::users.edit', compact('user',  'permissionActions', 'permissionModel', 'roles', 'permission', 'userName'));
     }
 
     /**
@@ -135,30 +138,28 @@ class UserController extends Controller
     { 
         app()['cache']->forget('spatie.permission.cache');
         $user = config('auth.providers.users.model')::find($userId);
-        $user->update(['name' => $request->name]); 
+        $user->update([$this->userName => $request->name]); 
         $user->permissions()->detach(); 
-        $input = $request->all(); 
+        $inputs = $request->all(); 
         $user->roles()->detach();
         app()['cache']->forget('spatie.permission.cache'); 
        
-
         if($request->roles != null){ 
             $roles = $request->roles;
             if(! optional(auth()->user())->hasRole('super-admin')){
-                foreach (array_keys($roles, 'super-admin') as $key) {
-                    unset($roles[$key]);
-                }
-            }
+
+                $roles = collect($roles)->filter(function ($value, $key) {
+                    return $value != 'super-admin';
+                });
+            } 
             $user->assignRole($roles); 
         }
-       
-        foreach ($input as $key => $value) { 
-       
-              if (!($key == '_token' || $key == 'name' || $key === 'password' ||  $key === 'confirm_password' || $key === 'email' || $key == '_method'||  $key == 'roles')) {
-                  $key = str_replace('_', '-', $key); 
-                  $user->givePermissionTo($key);
-              }
-          }
+        
+        collect($inputs)->except(['_token', 'name', 'password', 'confirm_password', 'email', '_method', 'roles'])->each(function ($input, $key) use ($user) {
+            $key = str_replace('_', '-', $key); 
+            $user->givePermissionTo($key);
+        });
+     
         return redirect()->route('user.show', [$user->id]);
     }
 
@@ -173,5 +174,12 @@ class UserController extends Controller
         $user = config('auth.providers.users.model')::find($userId);
         $user->delete();
         return redirect()->route('user.index');
+    } 
+
+    public function log($userId) 
+    {  
+        $user = config('auth.providers.users.model')::find($userId);
+        $userLogs =  $user->activity()->paginate(config('permissionview.pagination'));
+        return view('Permissionview::users.log', compact('userLogs'));
     }
 }

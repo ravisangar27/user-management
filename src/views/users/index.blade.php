@@ -11,21 +11,26 @@
                             <th>Name</th>
                             <th>Email</th> 
                             <th>Roles</th>
-                            <th width="180px">Action</th>
+                            <th width="270px">Action</th>
                         </tr>
                     </thead>
                     <tbody> 
                         @foreach($users as $user)
                             <tr>
-                                <td>  <a href="{!! route('user.show', [$user->id]) !!}" > {{  $user->name }}  </a> </td> 
+                                <td>  <a href="{!! route('user.show', [$user->id]) !!}" > {{  $user->$userName }}  </a> </td> 
                                 <td>{{  $user->email }}</td> 
                                 <td>{{  $user->getRoleNames()->implode(' ,') }}</td>
                                 <td> 
                                     <div class="row">
-                                        <div class="col-md-6 text-left">
+                                        <div class="col-md-4 text-left">
                                             <a href="{!! route('user.edit', [$user->id]) !!}" class='btn btn-primary'>Edit </a>&nbsp;&nbsp; 
                                         </div> 
-                                        <div class="col-md-6 text-right">
+                                        @if (optional(auth()->user())->hasRole('super-admin'))
+                                        <div class="col-md-4 text-center">
+                                            <a href="{!! route('userLog', [$user->id]) !!}" class='btn btn-primary'>User Log </a>&nbsp;&nbsp; 
+                                        </div> 
+                                        @endif
+                                        <div class="col-md-4 text-right">
                                             {{ Form::open(['method' => 'DELETE', 'route' => ['user.destroy', $user->id]]) }}
                                                 {{ Form::submit('Delete', ['class' => 'btn btn-danger']) }}
                                             {{ Form::close() }}
@@ -35,7 +40,10 @@
                             </tr> 
                         @endforeach
                     </tbody>
-                </table>
+                </table> 
+                <div> 
+                {{ $users->links() }}
+                </div>
             </div>
         </div>
     </div>

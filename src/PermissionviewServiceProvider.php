@@ -65,7 +65,7 @@ class PermissionviewServiceProvider extends ServiceProvider
     {
         $router = $this->app['router'];
         $router->macro('permissionView', function () use ($router) {
-            $router->group(['middleware' => ['web', 'role:super-admin']], function () { 
+            $router->group(['middleware' => ['web', 'role:super-admin']], function ($router) { 
                 $router->resource('role', '\Aucos\Permissionview\Http\Controllers\RoleController', ['only' => [
                 		'create', 'destroy'
                 	]
@@ -76,8 +76,15 @@ class PermissionviewServiceProvider extends ServiceProvider
                         'create', 'destroy', 'store'
                     ]
                 ]); 
+
+                $router->get('user/{id}/log', '\Aucos\Permissionview\Http\Controllers\UserController@log')->name('userLog');
+                
+                $router->resource('activity', '\Aucos\Permissionview\Http\Controllers\ActivityController', ['only' => [
+                        'index', 'show'
+                    ]
+                ]);
             });
-            $router->group(['middleware' => ['web', 'role:super-admin|admin']], function () {
+            $router->group(['middleware' => ['web', 'role:super-admin|admin']], function ($router) {
                 
                 $router->resource('role', '\Aucos\Permissionview\Http\Controllers\RoleController', ['except' => [
                         'create', 'destroy'
@@ -88,6 +95,7 @@ class PermissionviewServiceProvider extends ServiceProvider
                     ]
                 ]); 
                 $router->resource('user', '\Aucos\Permissionview\Http\Controllers\UserController'); 
+
                 
             });
         });

@@ -3,7 +3,8 @@
     "description": "laravel permission  view package",
     "require": {
         "spatie/laravel-permission": "^2.7",
-        "laravelcollective/html":"^5.4.0"
+        "laravelcollective/html":"^5.4.0",
+        "spatie/laravel-activitylog": "^2.4"
     },
     "license": "MIT",
     "authors": [
