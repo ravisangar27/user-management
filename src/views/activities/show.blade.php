@@ -26,34 +26,12 @@
                             <td>Time</td>
                             <td>{{  $activity->created_at }}</td>
                         </tr>
-                        <tr>
-                            <td>Subject</td>
-                            <td> 
-                                @if($activity->subject != null)
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Value</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach(collect($activity->subject->getAttributes())->except(['id', 'created_at', 'updated_at', 'deleted_at']) as $name => $value)
-                                            <tr>
-                                                <td>{!! $name !!}</td>
-                                                <td>{!! $value !!}</td>
-                                            </tr>
-                                        @endforeach 
-                                    </tbody> 
-                                </table>
-                                @endif
-                            </td>
-                        </tr>
+                       
                         <tr>
                             <td>Description</td>
                             <td> {{ $activity->description }} </td>
                         </tr>
-                     
+                        @if(array_key_exists('attributes', $activity->changes()->toArray()))
                         <tr>
                             <td>Changes</td>
                             <td> 
@@ -81,7 +59,7 @@
                                 </table>
                             </td>
                         </tr>
-                         
+                        @endif
                     </tbody> 
                 </table>
             </div>
