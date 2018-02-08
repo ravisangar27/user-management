@@ -17,7 +17,7 @@
                     <tbody> 
                         @foreach($activities as $activity)
                             <tr>
-                                <td>{{ class_basename($activity->subject) }}</td>    
+                                <td>{{  class_basename($activity->subject_type)  }}</td>    
                                 <td>{{  $activity->description }}</td>
                                 <td>{{  $activity->causer->email }}</td>
                                 <td>{{  $activity->created_at }}</td> 

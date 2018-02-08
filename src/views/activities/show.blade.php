@@ -20,7 +20,7 @@
                         </tr>
                         <tr>
                             <td>Model name</td>
-                            <td>{{  class_basename($activity->subject)  }}</td>
+                            <td>{{  class_basename($activity->subject_type)  }}</td>
                         </tr>
                         <tr>
                             <td>Time</td>
@@ -39,9 +39,9 @@
                                     <thead>
                                         <tr>
                                             <th>Name</th>
-                                            <th>Attributes</th>
+                                            <th>Current value</th>
                                             @if(array_key_exists('old', $activity->changes()->toArray()))
-                                            <th>Old</th>
+                                            <th>Old value</th>
                                             @endif  
                                         </tr>
                                     </thead>

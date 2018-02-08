@@ -16,7 +16,7 @@
                     <tbody> 
                         @foreach($userLogs as $userLog)
                             <tr>
-                                <td>{{ class_basename($userLog->subject) }}</td>
+                                <td>{{  class_basename($userLog->subject_type)  }}</td>
                                 <td>{{  $userLog->description }}</td> 
                                 <td>{{  $userLog->created_at }}</td>
                                 <td><a href="{!! route('activity.show', [$userLog->id]) !!}" class='btn btn-primary'>Show</a></td>
