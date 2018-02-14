@@ -50,8 +50,9 @@
                                             <tr>
                                                 <td>{!! $key !!}</td>
                                                 <td>{!! $value !!}</td>
-                                                @if(array_key_exists('old', $activity->changes()->toArray()))
-                                                <td>{!! $activity->changes()['old'][$key] !!}</td>
+                                                @if(array_key_exists('old', $activity->changes()->toArray())) 
+                                                
+                                                <td  {!! $activity->changes()['old'][$key] != $value ? 'class="text-primary"' : '' !!} >{!! $activity->changes()['old'][$key] !!}</td>
                                                 @endif  
                                             </tr>
                                         @endforeach 

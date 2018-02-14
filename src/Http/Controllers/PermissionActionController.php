@@ -2,19 +2,25 @@
 
 namespace Aucos\Permissionview\Http\Controllers;
 
-use Illuminate\Http\Request; 
-use Aucos\Permissionview\Http\Requests\PermissionAction\CreateReqeust; 
-use Route; 
-use Spatie\Permission\Models\Permission; 
-use Aucos\Permissionview\Models\PermissionAction; 
-
+use Aucos\Permissionview\Http\Requests\PermissionAction\CreateReqeust;
+use Aucos\Permissionview\Models\PermissionAction;
 
 class PermissionActionController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
     public function index()
-    {  
+    {
         $permissionActions = PermissionAction::paginate(config('permissionview.pagination'));
+
         return view('Permissionview::permissionActions.index', compact('permissionActions'));
     }
 
@@ -24,8 +30,7 @@ class PermissionActionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {   
-
+    {
         return view('Permissionview::permissionActions.create');
     }
 
@@ -35,18 +40,17 @@ class PermissionActionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-
     public function store(CreateReqeust $request)
-    {   
-        $permissionActionInput = array(
+    {
+        $permissionActionInput = [
             'name' => $request->name,
             'display_name' => $request->display_name
-        ); 
+        ];
 
-        if($request->has('permission_default')){
+        if ($request->has('permission_default')) {
             $permissionActionInput['permission_default'] = true;
         }
-        
+
         $permissionAction = PermissionAction::create($permissionActionInput);
 
         return redirect()->route('permissionAction.show', [$permissionAction->id]);
@@ -59,8 +63,7 @@ class PermissionActionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(PermissionAction $permissionAction)
-    { 
-       
+    {
         return view('Permissionview::permissionActions.show', compact('permissionAction'));
     }
 
@@ -83,16 +86,16 @@ class PermissionActionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(CreateReqeust $request, PermissionAction $permissionAction)
-    { 
-        $permissionActionInput = array(
+    {
+        $permissionActionInput = [
             'name' => $request->name,
             'display_name' => $request->display_name
-        ); 
-        
-        $permissionActionInput['permission_default'] = ($request->has('permission_default'))? true : false;
+        ];
 
-        $permissionAction->update($permissionActionInput); 
-      
+        $permissionActionInput['permission_default'] = ($request->has('permission_default')) ? true : false;
+
+        $permissionAction->update($permissionActionInput);
+
         return redirect()->route('permissionAction.show', [$permissionAction->id]);
     }
 
@@ -103,8 +106,7 @@ class PermissionActionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(PermissionAction $permissionAction)
-    { 
-        
+    {
         $permissionAction->delete();
 
         return redirect()->route('permissionAction.index');

@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+
 class CreatePermissionviewTable extends Migration
 {
     /**
@@ -26,8 +27,8 @@ class CreatePermissionviewTable extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-       
     }
+
     /**
      * Reverse the migrations.
      *
@@ -36,9 +37,8 @@ class CreatePermissionviewTable extends Migration
     public function down()
     {
         $tableNames = config('permissionview.table_names');
-     
+
         Schema::dropIfExists($tableNames['permissionAction']);
         Schema::dropIfExists($tableNames['permissionModel']);
-     
     }
 }
