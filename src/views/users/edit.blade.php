@@ -24,7 +24,7 @@
 
                         <div class="form-group {!! ($errors->has('confirm_password')) ? 'has-error' : '' !!}"> 
                             {!! Form::label('roles', 'Roles') !!}
-                            <select class="js-example-basic-multiple" value="admin" style="width:100%" name="roles[]" multiple="multiple">
+                            <select class="js-example-basic-multiple role" value="admin" style="width:100%" name="roles[]" multiple="multiple">
                             @foreach($roles as $role) 
                                 @if($user->hasRole($role->name))
                                     <option selected='selected' value="{{ $role->name }}">{{ $role->name }}</option>
@@ -39,21 +39,20 @@
 
                        
                         <table class="table table-striped table-header-rotated">
-                        <thead> 
-                            <tr> 
-                                <th></th>
-                                @foreach($permissionActions as $action)
-                                <th><div class="rotate-45"><span>{!! $action['display_name'] !!}</span></div></th>
-                                @endforeach
-                            </tr>
-                        </thead>
-                        <tbody>
-                        
-                            @foreach($permissionModel as $model)
-                            <tr>
-                                <td>{!! $model['display_name'] !!}</td>
-                                @foreach($permissionActions as $action)
-                                <td>
+                            <thead> 
+                                <tr> 
+                                    <th></th>
+                                    @foreach($permissionActions as $action)
+                                    <th class="text-center" ><div class="rotate-45"><span>{!! $action['display_name'] !!}</span></div></th>
+                                    @endforeach
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($permissionModel as $model)
+                                <tr>
+                                    <td>{!! $model['display_name'] !!}</td>
+                                    @foreach($permissionActions as $action)
+                                    <td class="{!! $model['name'].'-'.$action['name']  !!} text-center " >
                                     @if($permission->where('name', $model['name'].'-'.$action['name'])->count()) 
                                             @if($user->hasPermissionTo($model['name'].'-'.$action['name']))
                                             {!! Form::checkbox($model['name'].'-'.$action['name'] ,1  , true) !!}
@@ -76,4 +75,28 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('javascript')
+<script>
+    $(document).ready(function() {
+        var roles = {!! $roles !!};
+        rolePermission($('.role').val());
+        $('.role').change( function(){ 
+            $( "td" ).removeClass( "bg-info" )
+            rolePermission($(this).val());
+        });
+
+        function rolePermission(selectedRoles){
+            roles.filter(function(role) {
+                return selectedRoles.indexOf(role.name) > -1;
+            }).forEach(function(selectedRole) {
+                selectedRole.permissions.forEach(function(permission) {
+                    $("."+permission.name).addClass( "bg-info" );
+                });
+            });
+        }
+    }); 
+   //  $('.email').trigger('change');
+</script>
 @endsection

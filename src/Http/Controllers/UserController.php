@@ -42,9 +42,9 @@ class UserController extends Controller
         app()['cache']->forget('spatie.permission.cache');
 
         if (optional(auth()->user())->hasRole('super-admin')) {
-            $roles = Role::all();
+            $roles = Role::with('permissions')->get();
         } else {
-            $roles = Role::where('name', '!=', 'super-admin')->get();
+            $roles = Role::with('permissions')->where('name', '!=', 'super-admin')->get();
         }
 
         $permission = $this->permission;
@@ -114,11 +114,13 @@ class UserController extends Controller
     {
         app()['cache']->forget('spatie.permission.cache');
         $user = config('auth.providers.users.model')::find($userId);
+
         if (optional(auth()->user())->hasRole('super-admin')) {
-            $roles = Role::all();
+            $roles = Role::with('permissions')->get();
         } else {
-            $roles = Role::where('name', '!=', 'super-admin')->get();
+            $roles = Role::with('permissions')->where('name', '!=', 'super-admin')->get();
         }
+
         $permission = $this->permission;
         $permissionActions = PermissionAction::all();
         $permissionModel = PermissionModel::all();

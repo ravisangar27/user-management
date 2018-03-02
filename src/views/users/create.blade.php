@@ -17,7 +17,7 @@
 
                         <div class="form-group {!! ($errors->has('email')) ? 'has-error' : '' !!}">
                             {!! Form::label('email', 'Email') !!}
-                            {!! Form::email('email', null, array('class' => 'form-control', 'placeholder' => '' )) !!}
+                            {!! Form::email('email', null, array('class' => 'form-control email', 'placeholder' => '' )) !!}
                             {!! ($errors->has('email') ? $errors->first('email') : '') !!}
                         </div>   
 
@@ -35,7 +35,7 @@
 
                         <div class="form-group {!! ($errors->has('confirm_password')) ? 'has-error' : '' !!}"> 
                             {!! Form::label('roles', 'Roles') !!}
-                            <select class="js-example-basic-multiple" value="admin" style="width:100%" name="roles[]" multiple="multiple">
+                            <select class="js-example-basic-multiple role" value="admin" style="width:100%" name="roles[]" multiple="multiple">
                             @foreach($roles as $role)
                                 <option value="{{ $role->name }}">{{ $role->name }}</option>
                             @endforeach
@@ -49,7 +49,7 @@
                             <tr> 
                                 <th></th>
                                 @foreach($permissionActions as $action)
-                                <th><div class="rotate-45"><span>{!! $action['display_name'] !!}</span></div></th>
+                                <th class="text-center"><div class="rotate-45"><span>{!! $action['display_name'] !!}</span></div></th>
                                 @endforeach
                             </tr>
                         </thead>
@@ -59,7 +59,7 @@
                             <tr>
                                 <td>{!! $model['display_name'] !!}</td>
                                 @foreach($permissionActions as $action)
-                                <td>
+                                <td class="{!! $model['name'].'-'.$action['name']  !!} text-center ">
                                     @if($permission->where('name', $model['name'].'-'.$action['name'])->count())
                                     
                                         {!! Form::checkbox($model['name'].'-'.$action['name']), '' !!}
@@ -71,13 +71,35 @@
                                 @endforeach
                             </tbody>
                         </table>  
-               
-                        
-
+            
                         {!! Form::submit('add', array('class' => 'btn btn-primary')) !!}
 
                     {!! Form::close() !!}
             </div>
         </div>
     </div>
+@endsection
+
+@section('javascript')
+<script>
+    $(document).ready(function() {
+        var roles = {!! $roles !!};
+    
+        $('.role').change( function(){ 
+            $( "td" ).removeClass( "bg-info" )
+            rolePermission($(this).val());
+        });
+
+        function rolePermission(selectedRoles){
+            roles.filter(function(role) {
+                return selectedRoles.indexOf(role.name) > -1;
+            }).forEach(function(selectedRole) {
+                selectedRole.permissions.forEach(function(permission) {
+                    $("."+permission.name).addClass( "bg-info" );
+                });
+            });
+        }
+    }); 
+   //  $('.email').trigger('change');
+</script>
 @endsection
