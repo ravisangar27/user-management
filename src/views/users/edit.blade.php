@@ -24,7 +24,7 @@
 
                         <div class="form-group {!! ($errors->has('confirm_password')) ? 'has-error' : '' !!}"> 
                             {!! Form::label('roles', 'Roles') !!}
-                            <select class="js-example-basic-multiple role" value="admin" style="width:100%" name="roles[]" multiple="multiple">
+                            <select class="js-example-basic-multiple role" id="role" value="admin" style="width:100%" name="roles[]" multiple="multiple">
                             @foreach($roles as $role) 
                                 @if($user->hasRole($role->name))
                                     <option selected='selected' value="{{ $role->name }}">{{ $role->name }}</option>
@@ -54,7 +54,7 @@
                                     @foreach($permissionActions as $action)
                                     <td class="{!! $model['name'].'-'.$action['name']  !!} text-center " >
                                     @if($permission->where('name', $model['name'].'-'.$action['name'])->count()) 
-                                            @if($user->hasPermissionTo($model['name'].'-'.$action['name']))
+                                            @if($user->hasDirectPermission($model['name'].'-'.$action['name']))
                                             {!! Form::checkbox($model['name'].'-'.$action['name'] ,1  , true) !!}
                                             @else
                                             {!! Form::checkbox($model['name'].'-'.$action['name']), '' !!}
@@ -98,5 +98,7 @@
         }
     }); 
    //  $('.email').trigger('change');
+
+ 
 </script>
 @endsection

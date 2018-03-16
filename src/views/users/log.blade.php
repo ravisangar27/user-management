@@ -4,6 +4,13 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8 col-md-offset-2"> 
+                <div >
+                    <ol class="breadcrumb">
+                        <li><a href="{!! route('user.index') !!}">User</a></li> 
+                        <li><b>User Log for {!! $user->$userName !!} </b></li>
+                        
+                    </ol>
+                </div>
                 <table class="table table-striped">
                     <thead>
                         <tr>   

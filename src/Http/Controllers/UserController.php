@@ -120,7 +120,7 @@ class UserController extends Controller
         } else {
             $roles = Role::with('permissions')->where('name', '!=', 'super-admin')->get();
         }
-
+        
         $permission = $this->permission;
         $permissionActions = PermissionAction::all();
         $permissionModel = PermissionModel::all();
@@ -182,7 +182,7 @@ class UserController extends Controller
     {
         $user = config('auth.providers.users.model')::find($userId);
         $userLogs = $user->activity()->paginate(config('permissionview.pagination'));
-
-        return view('Permissionview::users.log', compact('userLogs'));
+        $userName = $this->userName;
+        return view('Permissionview::users.log', compact('userLogs', 'user', 'userName'));
     }
 }
